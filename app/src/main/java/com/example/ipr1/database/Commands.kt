@@ -1,14 +1,13 @@
 package com.example.ipr1.database
 
 import android.database.sqlite.SQLiteOpenHelper
-import android.provider.BaseColumns
 import com.example.ipr1.database.models.Note
 
 object Commands {
     fun deleteNote(openDatabaseHelper: SQLiteOpenHelper, noteId: Int) {
         openDatabaseHelper.writableDatabase.delete(
             Contract.NoteEntry.TABLE_NAME,
-            "${BaseColumns._ID}=?",
+            "${Contract.NoteEntry.COLUMN_NAME_NOTE_ID}=?",
             arrayOf(noteId.toString())
         )
     }
@@ -23,7 +22,7 @@ object Commands {
         openDatabaseHelper.writableDatabase.update(
             Contract.NoteEntry.TABLE_NAME,
             note.getContentValues(),
-            "${BaseColumns._ID} = ?",
+            "${Contract.NoteEntry.COLUMN_NAME_NOTE_ID} = ?",
             arrayOf(note.id.toString())
         ).toLong()
 

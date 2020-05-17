@@ -11,6 +11,8 @@ class DatabaseOpenHelper(context: Context) : SQLiteOpenHelper(
 ) {
     override fun onCreate(database: SQLiteDatabase?) {
         database!!.execSQL(Contract.NoteEntry.SQL_CREATE_TABLE)
+        database.execSQL(Contract.ChipEntry.SQL_CREATE_TABLE)
+        database.execSQL(Contract.NoteHasChipsEntry.SQL_CREATE_TABLE)
     }
 
     override fun onUpgrade(
@@ -18,5 +20,13 @@ class DatabaseOpenHelper(context: Context) : SQLiteOpenHelper(
         Int
     ) {
         db!!.execSQL(Contract.NoteEntry.SQL_DROP_TABLE)
+        db.execSQL(Contract.ChipEntry.SQL_DROP_TABLE)
+        db.execSQL(Contract.NoteHasChipsEntry.SQL_DROP_TABLE)
+    }
+
+    override fun onDowngrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
+        db!!.execSQL(Contract.NoteEntry.SQL_DROP_TABLE)
+        db.execSQL(Contract.ChipEntry.SQL_DROP_TABLE)
+        db.execSQL(Contract.NoteHasChipsEntry.SQL_DROP_TABLE)
     }
 }

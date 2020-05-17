@@ -38,12 +38,6 @@
                         android:hint="Enter description..."
                         android:minHeight="100dp"
                         android:padding="10dp"/>
-                <com.pchmn.materialchips.ChipsInput
-                        android:id="@+id/chips_input"
-                        android:layout_width="match_parent"
-                        app:maxRows="3"
-                        android:layout_height="wrap_content"
-                        app:hint="Enter text note" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
         <Button
