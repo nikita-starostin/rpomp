@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">ipr1</string>
     <string name="title_activity_add_note">AddNote</string>
+    <string name="add">Add</string>
+    <string name="update">Update</string>
+    <string name="cancel">Cancel</string>
+    <string name="enter_chips">Enter chips</string>
 </resources>

@@ -10,15 +10,15 @@ import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import com.example.ipr1.constants.Constants
-import com.example.ipr1.database.Commands
+import com.example.ipr1.database.commands.NoteCommands
 import com.example.ipr1.database.DatabaseOpenHelper
 import com.example.ipr1.database.Queries
-import com.example.ipr1.database.models.Note
+import com.example.ipr1.database.models.NoteModel
 import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var listNotes: ArrayList<Note>
+    private lateinit var listNotes: ArrayList<NoteModel>
     private lateinit var dbOpenHelper: DatabaseOpenHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -74,12 +74,12 @@ class MainActivity : AppCompatActivity() {
         startActivity(Intent(this, AddOrUpdateNoteActivity::class.java))
     }
 
-    fun deleteNote(note: Note) {
-        Commands.deleteNote(dbOpenHelper, note.id!!)
+    fun deleteNote(note: NoteModel) {
+        NoteCommands.deleteNote(dbOpenHelper, note.id!!)
         syncFromDatabase("%")
     }
 
-    fun startEditNote(note: Note) {
+    fun startEditNote(note: NoteModel) {
         val intent = Intent(this, AddOrUpdateNoteActivity::class.java)
         intent.putExtra(Constants.ID, note.id)
         intent.putExtra(Constants.TITLE, note.title)

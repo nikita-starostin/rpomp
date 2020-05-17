@@ -1,9 +1,10 @@
-package com.example.ipr1.database
+package com.example.ipr1.database.commands
 
 import android.database.sqlite.SQLiteOpenHelper
-import com.example.ipr1.database.models.Note
+import com.example.ipr1.database.Contract
+import com.example.ipr1.database.models.NoteModel
 
-object Commands {
+object NoteCommands {
     fun deleteNote(openDatabaseHelper: SQLiteOpenHelper, noteId: Int) {
         openDatabaseHelper.writableDatabase.delete(
             Contract.NoteEntry.TABLE_NAME,
@@ -12,13 +13,13 @@ object Commands {
         )
     }
 
-    fun addOrUpdateNote(openDatabaseHelper: SQLiteOpenHelper, note: Note): Long = if (note.id == 0) {
+    fun addOrUpdateNote(openDatabaseHelper: SQLiteOpenHelper, note: NoteModel): Long = if (note.id == 0) {
         addNote(openDatabaseHelper, note)
     } else {
         updateNote(openDatabaseHelper, note)
     }
 
-    private fun updateNote(openDatabaseHelper: SQLiteOpenHelper, note: Note) =
+    private fun updateNote(openDatabaseHelper: SQLiteOpenHelper, note: NoteModel) =
         openDatabaseHelper.writableDatabase.update(
             Contract.NoteEntry.TABLE_NAME,
             note.getContentValues(),
@@ -26,6 +27,6 @@ object Commands {
             arrayOf(note.id.toString())
         ).toLong()
 
-    private fun addNote(openDatabaseHelper: SQLiteOpenHelper, note: Note) =
+    private fun addNote(openDatabaseHelper: SQLiteOpenHelper, note: NoteModel) =
         openDatabaseHelper.writableDatabase.insert(Contract.NoteEntry.TABLE_NAME, null, note.getContentValues())
 }

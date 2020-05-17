@@ -4,17 +4,17 @@ import android.content.Intent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import com.example.ipr1.database.models.Note
+import com.example.ipr1.database.models.NoteModel
 import com.example.ipr1.helpers.Helpers
 import kotlinx.android.synthetic.main.row.view.*
 
-class NoteListItemAdapter(private val mainActivity: MainActivity, private val layoutRes: Int, objects: List<Note>) :
-    ArrayAdapter<Note>(mainActivity, layoutRes, objects) {
+class NoteListItemAdapter(private val mainActivity: MainActivity, private val layoutRes: Int, objects: List<NoteModel>) :
+    ArrayAdapter<NoteModel>(mainActivity, layoutRes, objects) {
 
     override fun getView(
         position: Int, convertView: View?, parent: ViewGroup
     ): View {
-        var view = mainActivity.layoutInflater.inflate(layoutRes, parent, false)
+        val view = mainActivity.layoutInflater.inflate(layoutRes, parent, false)
         val note = getItem(position)!!
         view.titleTv.text = note.title
         view.descTv.text = note.description
