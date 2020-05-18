@@ -1,8 +1,7 @@
-package com.example.ipr1.database.commands
+package com.example.ipr1.database.entries.chip
 
 import android.database.sqlite.SQLiteOpenHelper
 import com.example.ipr1.database.Contract
-import com.example.ipr1.database.models.ChipModel
 
 object ChipCommands {
     fun deleteChip(openDatabaseHelper: SQLiteOpenHelper, chipId: Int) {
@@ -15,4 +14,10 @@ object ChipCommands {
 
     fun addChip(openDatabaseHelper: SQLiteOpenHelper, chip: ChipModel) =
         openDatabaseHelper.writableDatabase.insert(Contract.ChipEntry.TABLE_NAME, null, chip.getContentValues())
+
+    fun addChipIfNotExists(openDatabaseHelper: SQLiteOpenHelper, chip: ChipModel) {
+        if(chip.id <= 0) {
+            addChip(openDatabaseHelper, chip)
+        }
+    }
 }

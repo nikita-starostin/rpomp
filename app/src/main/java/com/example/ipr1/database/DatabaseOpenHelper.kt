@@ -13,6 +13,7 @@ class DatabaseOpenHelper(context: Context) : SQLiteOpenHelper(
         database!!.execSQL(Contract.NoteEntry.SQL_CREATE_TABLE)
         database.execSQL(Contract.ChipEntry.SQL_CREATE_TABLE)
         database.execSQL(Contract.NoteHasChipsEntry.SQL_CREATE_TABLE)
+        Contract.ChipEntry.getSqlFotGeneratingSeed().forEach { database.execSQL(it) }
     }
 
     override fun onUpgrade(

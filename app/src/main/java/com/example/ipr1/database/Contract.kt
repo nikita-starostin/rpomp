@@ -13,7 +13,7 @@ object Contract {
         const val SQL_CREATE_TABLE =
             "CREATE TABLE IF NOT EXISTS $TABLE_NAME ($COLUMN_NAME_NOTE_ID INTEGER PRIMARY KEY, $COLUMN_NAME_TITLE TEXT, $COLUMN_NAME_DESCRIPTION TEXT);"
         const val SQL_DROP_TABLE =
-            "DROP TABLE IF EXISTS $TABLE_NAME"
+            "DROP TABLE IF EXISTS $TABLE_NAME;"
     }
 
     object ChipEntry {
@@ -24,7 +24,13 @@ object Contract {
         const val SQL_CREATE_TABLE =
             "CREATE TABLE IF NOT EXISTS $TABLE_NAME ($COLUMN_NAME_CHIP_ID INTEGER PRIMARY KEY, $COLUMN_NAME_CHIP_TEXT TEXT);"
         const val SQL_DROP_TABLE =
-            "DROP TABLE IF EXISTS $TABLE_NAME"
+            "DROP TABLE IF EXISTS $TABLE_NAME;"
+
+        private fun getSqlAddChipIfNotExists(chipText: String) =
+            "INSERT INTO $TABLE_NAME($COLUMN_NAME_CHIP_TEXT) SELECT '$chipText' WHERE NOT EXISTS(SELECT $COLUMN_NAME_CHIP_TEXT FROM $TABLE_NAME WHERE $COLUMN_NAME_CHIP_TEXT = '$chipText');"
+
+        fun getSqlFotGeneratingSeed() = arrayOf("sport", "music")
+            .map { getSqlAddChipIfNotExists(it) }
     }
 
     object NoteHasChipsEntry {

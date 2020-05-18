@@ -1,4 +1,4 @@
-package com.example.ipr1.database.models
+package com.example.ipr1.database.entries.chip
 
 import android.content.ContentValues
 import com.example.ipr1.database.Contract

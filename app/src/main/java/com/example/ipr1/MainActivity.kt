@@ -9,33 +9,43 @@ import android.view.MenuItem
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
+import com.example.ipr1.adapters.NoteListItemAdapter
 import com.example.ipr1.constants.Constants
-import com.example.ipr1.database.commands.NoteCommands
 import com.example.ipr1.database.DatabaseOpenHelper
-import com.example.ipr1.database.Queries
-import com.example.ipr1.database.models.NoteModel
+import com.example.ipr1.database.entries.note.NoteCommands
+import com.example.ipr1.database.entries.note.NoteModel
+import com.example.ipr1.database.entries.note.NoteQueries
 import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : AppCompatActivity() {
     private lateinit var listNotes: ArrayList<NoteModel>
     private lateinit var dbOpenHelper: DatabaseOpenHelper
+    private lateinit var autocompleteState: AutocompleteState
+    private var filterTitle: String = "%"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         this.dbOpenHelper = DatabaseOpenHelper(this)
-        syncFromDatabase("%")
+        autocompleteState = AutocompleteState(this,
+            dbOpenHelper,
+            chipInput,
+            chipsGroup,
+            mutableListOf(),
+            { syncFromDatabase() })
+        syncFromDatabase()
     }
 
     override fun onResume() {
         super.onResume()
-        syncFromDatabase("%")
+        syncFromDatabase()
     }
 
-    private fun syncFromDatabase(title: String) {
-        this.listNotes = Queries.queryNotes(this.dbOpenHelper, title)
-        notesLv.adapter = NoteListItemAdapter(this, R.layout.row, listNotes)
+    private fun syncFromDatabase() {
+        this.listNotes = NoteQueries.queryNotes(this.dbOpenHelper, filterTitle, ArrayList(autocompleteState.getSelectedChips()))
+        notesLv.adapter =
+            NoteListItemAdapter(this, R.layout.row, listNotes)
         if (supportActionBar != null) {
             (supportActionBar as ActionBar).subtitle = "You have ${notesLv.count} note(s) in list..."
         }
@@ -49,12 +59,14 @@ class MainActivity : AppCompatActivity() {
         searchView.setSearchableInfo(searchManager.getSearchableInfo(componentName))
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                syncFromDatabase("%$query%")
+                filterTitle = "%$query%"
+                syncFromDatabase()
                 return false
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                syncFromDatabase("%$newText%")
+                filterTitle = "%$newText%"
+                syncFromDatabase()
                 return false
             }
         })
@@ -64,7 +76,9 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         if (item != null) {
             when (item.itemId) {
-                R.id.addNote -> { startAddNote() }
+                R.id.addNote -> {
+                    startAddNote()
+                }
             }
         }
         return super.onOptionsItemSelected(item!!)
@@ -76,7 +90,7 @@ class MainActivity : AppCompatActivity() {
 
     fun deleteNote(note: NoteModel) {
         NoteCommands.deleteNote(dbOpenHelper, note.id!!)
-        syncFromDatabase("%")
+        syncFromDatabase()
     }
 
     fun startEditNote(note: NoteModel) {

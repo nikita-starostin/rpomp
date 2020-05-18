@@ -7,10 +7,32 @@
               android:background="@color/gray"
               android:orientation="vertical"
               tools:context=".MainActivity">
+    <com.google.android.flexbox.FlexboxLayout
+            android:id="@+id/chipsGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            app:flexWrap="wrap"
+            app:alignItems="stretch"
+            app:alignContent="space_around"
+            app:showDivider="beginning|middle|end"
+            app:dividerDrawable="@drawable/divider">
+        <AutoCompleteTextView
+                android:id="@+id/chipInput"
+                android:completionThreshold="1"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                app:layout_flexGrow="1"
+                android:hint="enter chips"
+                android:background="@android:color/transparent"
+                android:imeOptions="actionDone"
+                android:inputType="text"/>
+    </com.google.android.flexbox.FlexboxLayout>
+
     <ListView
             android:id="@+id/notesLv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:divider="@null"
-            android:dividerHeight="1dp" />
+            android:dividerHeight="1dp"/>
 </LinearLayout>

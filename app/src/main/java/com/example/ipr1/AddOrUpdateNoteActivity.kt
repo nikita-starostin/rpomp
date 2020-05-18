@@ -4,24 +4,23 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import com.example.ipr1.constants.Constants
 import com.example.ipr1.database.DatabaseOpenHelper
-import com.example.ipr1.database.commands.NoteCommands
-import com.example.ipr1.database.models.ChipModel
-import com.example.ipr1.database.models.NoteModel
-import com.google.android.flexbox.FlexboxLayout
-import com.google.android.material.chip.Chip
+import com.example.ipr1.database.entries.chip.ChipModel
+import com.example.ipr1.database.entries.chip.ChipQueries
+import com.example.ipr1.database.entries.note.NoteCommands
+import com.example.ipr1.database.entries.note.NoteModel
 import kotlinx.android.synthetic.main.activity_add_or_update_note.*
 
 class AddOrUpdateNoteActivity : AppCompatActivity() {
     var id = 0
-    private lateinit var chipListAdapter: ChipArrayAdapter
     private val databaseOpenHelper = DatabaseOpenHelper(this)
+    private lateinit var autocompleteState: AutocompleteState
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_or_update_note)
+        val selectedChips = mutableListOf<ChipModel>()
         try {
             val bundle: Bundle = intent.extras!!
             id = bundle.getInt(Constants.ID, 0)
@@ -29,35 +28,23 @@ class AddOrUpdateNoteActivity : AppCompatActivity() {
                 titleEt.setText(bundle.getString(Constants.TITLE))
                 descEt.setText(bundle.getString(Constants.DESCRIPTION))
                 submitBtn.text = resources.getString(R.string.update)
+                selectedChips.addAll(ChipQueries.queryChipsForNote(databaseOpenHelper, id))
             }
         } catch (ex: Exception) {
             submitBtn.text = resources.getString(R.string.add)
         }
-        addNewChip("sport", chipsGroup)
-        addNewChip("music", chipsGroup)
-        chipListAdapter = ChipArrayAdapter(
-            { chipModel, _, selectedChips ->
-                addNewChip(chipModel.text, chipsGroup)
-                selectedChips.add(chipModel)
-                chipInput.dismissDropDown()
-                chipInput.setText("")
-            }, this,
-            R.layout.chip_autocomplete_item,
-            mutableListOf(
-                ChipModel(1, "Hello"),
-                ChipModel(2, "World")
-            )
-        )
-        chipInput.setAdapter(chipListAdapter)
-        chipInput.setOnClickListener {
-            chipInput.showDropDown()
-        }
+        autocompleteState = AutocompleteState(this, databaseOpenHelper, chipInput, chipsGroup, selectedChips)
     }
 
     fun submit(view: View) {
         val idOrCount = NoteCommands.addOrUpdateNote(
             databaseOpenHelper,
-            NoteModel(id, titleEt.text.toString(), descEt.text.toString())
+            NoteModel(
+                id,
+                titleEt.text.toString(),
+                descEt.text.toString(),
+                ArrayList(autocompleteState.getSelectedChips())
+            )
         )
 
         if (idOrCount > 0) {
@@ -72,19 +59,5 @@ class AddOrUpdateNoteActivity : AppCompatActivity() {
 
     fun cancel(view: View) {
         finish()
-    }
-
-    private fun addNewChip(chipText: String, chipGroup: FlexboxLayout) {
-        val chip = Chip(this)
-        chip.text = chipText
-        chip.chipIcon = ContextCompat.getDrawable(this, R.mipmap.ic_launcher_round)
-        chip.isCloseIconEnabled = true
-        chip.isClickable = true
-        chip.isCheckable = false
-        chipGroup.addView(chip as View, chipGroup.childCount - 1)
-        chip.setOnCloseIconClickListener {
-            chipListAdapter.removeChipFromSelected(chipText)
-            chipGroup.removeView(chip as View)
-        }
     }
 }

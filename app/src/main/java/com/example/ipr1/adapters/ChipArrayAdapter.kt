@@ -1,4 +1,4 @@
-package com.example.ipr1
+package com.example.ipr1.adapters
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -6,30 +6,29 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Filter
-import com.example.ipr1.database.models.ChipModel
+import com.example.ipr1.database.entries.chip.ChipModel
 import kotlinx.android.synthetic.main.chip_autocomplete_item.view.*
 import java.util.*
-
 
 class ChipArrayAdapter(
     private val onClick: (chip: ChipModel, position: Int, selectedChips: MutableList<ChipModel>) -> Unit,
     context: Context,
     private val layoutResId: Int,
-    private val mOriginalValues: MutableList<ChipModel>
+    mOriginalValues: MutableList<ChipModel>,
+    private val selectedChips: MutableList<ChipModel> = mutableListOf()
 ) :
     ArrayAdapter<ChipModel>(context, layoutResId, mOriginalValues) {
 
     private val immutableOriginalValues = ArrayList(mOriginalValues)
     private val mFilter = ArrayFilter()
-    private val mLock = Object()
-
-    private val selectedChips = mutableListOf<ChipModel>()
 
     fun removeChipFromSelected(chipText: String) {
         with(selectedChips) {
             removeAt(indexOfFirst { it.text == chipText })
         }
     }
+
+    fun getSelectedChips() = selectedChips
 
     override fun getView(
         position: Int, convertView: View?, parent: ViewGroup
